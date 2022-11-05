@@ -4,5 +4,19 @@ services:
 
 before_install:
   - docker build -t pavelc/dockertest .
+
 script:
-  - docker run --rm -it pavelc/dockertest
+  - docker --version
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-1'
+  app: 'docker-java'
+  env: 'Dockerjava-env'
+  bucket_name: 'elasticbeanstalk-us-east-1-702323398464'
+  bucket_path: 'docker-java'
+  on:
+    branch: master
+  access_key_id: "$AWS_ACCESS_KEY"
+  secret_access_key: "$AWS_SECRET_KEY"
+

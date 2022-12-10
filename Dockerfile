@@ -1,10 +1,9 @@
-FROM maven:3.8.5-openjdk-17-slim as BUILD
-WORKDIR /usr/app
-COPY ./src ./src
-COPY pom.xml ./
-RUN mvn clean package
+FROM node:16-alpine as builder
+WORKDIR '/app'
+COPY package.json .
+RUN npm install
+COPY . .
+RUN npm run build
 
-FROM openjdk:17-jdk-slim
-COPY --from=build /usr/app/target/dockerTest.jar ./
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "dockerTest.jar"]
+FROM nginx
+COPY --from=builder /app/build /usr/share/nginx/html
